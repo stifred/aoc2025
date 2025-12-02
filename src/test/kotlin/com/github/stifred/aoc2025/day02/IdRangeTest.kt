@@ -11,7 +11,7 @@ class IdRangeTest {
       1698522-1698528,446443-446449,38593856-38593862,565653-565659,
       824824821-824824827,2121212118-2121212124
     """.trimIndent().replace("\n", "").asIdRanges()
-    assertEquals(1227775554L, ranges.invalidIdSum1())
+    assertEquals(1227775554, ranges.invalidIdSum1())
     assertEquals(4174379265, ranges.invalidIdSum2())
   }
 
