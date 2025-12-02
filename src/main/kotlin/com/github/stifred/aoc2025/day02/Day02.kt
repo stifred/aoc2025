@@ -5,10 +5,10 @@ import com.github.stifred.aoc2025.solutions.parseInput
 import com.github.stifred.aoc2025.solutions.solve
 
 fun main() {
-  val ranges = parseInput(day = 2, benchmark = true) { it.asIdRanges() }
+  val ranges = parseInput(day = 2, benchmark = false) { it.asIdRanges() }
 
-  solve(part = 1, true) { ranges.invalidIdSum1() }
-  solve(part = 2, true) { ranges.invalidIdSum2() }
+  solve(part = 1, benchmark = false) { ranges.invalidIdSum1() }
+  solve(part = 2, benchmark = false) { ranges.invalidIdSum2() }
 }
 
 fun Collection<IdRange>.invalidIdSum1() = flatMap { it.invalidIds1() }.sumOf { it.toLong() }
