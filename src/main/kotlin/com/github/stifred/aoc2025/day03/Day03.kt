@@ -7,8 +7,8 @@ import com.github.stifred.aoc2025.solutions.solve
 fun main() {
   val banks = parseInput(day = 3) { it.asBanks() }
 
-  solve(part = 1) { banks.totalJoltage(with = 2) }
-  solve(part = 1) { banks.totalJoltage(with = 12) }
+  solve(part = 1, benchmark = false) { banks.totalJoltage(with = 2) }
+  solve(part = 2, benchmark = false) { banks.totalJoltage(with = 12) }
 }
 
 fun Collection<BatteryBank>.totalJoltage(with: Int) = sumOf { it.joltage(with) }
