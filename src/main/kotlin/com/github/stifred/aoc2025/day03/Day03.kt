@@ -11,24 +11,17 @@ fun main() {
   solve(part = 2, benchmark = false) { banks.totalJoltage(with = 12) }
 }
 
-fun Collection<BatteryBank>.totalJoltage(with: Int) = sumOf { it.joltage(with) }
+fun Collection<List<Int>>.totalJoltage(with: Int) = sumOf { it.joltage(with) }
 
-data class BatteryBank(val batteries: List<Int>) {
-  fun joltage(with: Int): Long {
-    var total = 0L
-    var firstIndex = 0
-    for (i in (0..<with).reversed()) {
-      val subList = batteries.subList(firstIndex, batteries.size - i)
-      val first = subList.max()
-      firstIndex += subList.indexOf(first) + 1
+fun List<Int>.joltage(with: Int): Long = sequence {
+  var remaining = this@joltage
+  for (i in (0..<with).reversed()) {
+    val best = remaining.subList(0, remaining.size - i).max()
+    remaining = remaining.subList(remaining.indexOf(best) + 1, remaining.size)
 
-      total *= 10
-      total += first
-    }
-
-    return total
+    yield(best)
   }
-}
+}.fold(0L) { sum, b -> (sum * 10) + b }
 
 fun String.asBanks() = nonEmptyLineSequence().map { it.asBank() }.toList()
-private fun String.asBank() = BatteryBank(batteries = chunked(1).map { it.toInt() })
+private fun String.asBank() = chunked(1).map { it.toInt() }
