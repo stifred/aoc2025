@@ -13,7 +13,7 @@ fun main() {
   solve(part = 2, benchmark = false) { pd.totalAccessibleByForkliftCount }
 }
 
-val Grid2D<Unit>.accessibleByForklift get() = findAll(Unit).asSequence().filter { pos ->
+val Grid2D<Unit>.accessibleByForklift get() = usedPositions.asSequence().filter { pos ->
   Direction.all.asSequence()
     .map { pos.move(it) }
     .filter { elementAt(it) != null }

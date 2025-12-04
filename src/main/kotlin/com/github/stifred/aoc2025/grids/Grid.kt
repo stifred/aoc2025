@@ -40,7 +40,9 @@ class Grid2D<E : Any>(
   fun removeAt(pos: Vector2) = elements.remove(pos)
   fun removeAt(pos: Collection<Vector2>) = pos.forEach { removeAt(it) }
 
-  fun freePositions() = sequence {
+  val usedPositions: Set<Vector2> get() = elements.keys
+
+  val freePositions get() = sequence {
     for (x in topLeft.x..bottomRight.x) {
       for (y in topLeft.y..bottomRight.y) {
         val pos = x xy y
