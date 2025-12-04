@@ -13,7 +13,7 @@ fun main() {
   solve(part = 2, benchmark = false) { pd.totalAccessibleByForkliftCount }
 }
 
-val Grid2D<PaperRoll>.accessibleByForklift get() = findAll(PaperRoll).asSequence().filter { pos ->
+val Grid2D<Unit>.accessibleByForklift get() = findAll(Unit).asSequence().filter { pos ->
   Direction.all.asSequence()
     .map { pos.move(it) }
     .filter { elementAt(it) != null }
@@ -21,7 +21,7 @@ val Grid2D<PaperRoll>.accessibleByForklift get() = findAll(PaperRoll).asSequence
     .count() < 4
 }.toSet()
 
-val Grid2D<PaperRoll>.totalAccessibleByForkliftCount: Int get() = sequence {
+val Grid2D<Unit>.totalAccessibleByForkliftCount: Int get() = sequence {
   val grid = copy()
 
   while (true) {
@@ -32,6 +32,4 @@ val Grid2D<PaperRoll>.totalAccessibleByForkliftCount: Int get() = sequence {
   }
 }.sum()
 
-fun String.asPrintingDepartment() = asGrid(mapOf('@' to PaperRoll))
-
-data object PaperRoll
+fun String.asPrintingDepartment() = asGrid(mapOf('@' to Unit))
