@@ -20,7 +20,7 @@ class PrintingDepartmentTest {
     """.trimIndent()
     val pd = input.asPrintingDepartment()
 
-    assertEquals(13, pd.accessibleForklifts.size)
-    assertEquals(43, pd.totalAccessibleForkliftCount)
+    assertEquals(13, pd.accessibleByForklift.size)
+    assertEquals(43, pd.totalAccessibleByForkliftCount)
   }
 }
