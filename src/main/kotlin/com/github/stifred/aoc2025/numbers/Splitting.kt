@@ -1,7 +1,7 @@
 package com.github.stifred.aoc2025.numbers
 
 fun Int.asDigits() = sequence {
-  if (this@asDigits < 0) error("Negative value")
+  if (this@asDigits < 0) error("Negative int value")
 
   var remaining = this@asDigits
   while (remaining > 0) {
@@ -11,7 +11,7 @@ fun Int.asDigits() = sequence {
 }.toList().reversed()
 
 fun Long.asDigits() = sequence {
-  if (this@asDigits < 0) error("Negative value")
+  if (this@asDigits < 0) error("Negative long value")
 
   var remaining = this@asDigits
   while (remaining > 0) {

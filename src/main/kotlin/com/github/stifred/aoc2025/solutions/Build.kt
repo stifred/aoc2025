@@ -22,23 +22,29 @@ fun <T : Any> parseInput(day: Int, year: Int = 2025, benchmark: Boolean = false,
 }
 
 fun <T : Any> solve(part: Int, benchmark: Boolean = false, action: () -> T): T {
+  val elements = mutableSetOf<T>()
+
   val before = System.nanoTime()
-  val first = action()
+  elements += action()
   val after = System.nanoTime()
 
   val count = if (benchmark) benchCount(before, after) else 1
   repeat(count - 1) {
-    action()
+    elements += action()
   }
 
   val finalAfter = if (!benchmark) after else System.nanoTime()
   val each = (finalAfter - before) / count
 
+  if (elements.size > 1) {
+    error("Results are different: ${elements.first()}, ${elements.last()}, etc.")
+  }
+
   println("\nPART $part (benchmark=$benchmark, runs=$count)")
-  println("Output: $first")
+  println("Output: ${elements.first()}")
   println("Time:   ${formatNanos(each)}")
 
-  return first
+  return elements.first()
 }
 
 private fun benchCount(before: Long, after: Long): Int {
