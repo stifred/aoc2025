@@ -1,5 +1,6 @@
 package com.github.stifred.aoc2025.day02
 
+import com.github.stifred.aoc2025.numbers.asDigits
 import org.junit.jupiter.api.Assertions.*
 import kotlin.test.Test
 
@@ -17,11 +18,11 @@ class IdRangeTest {
 
   @Test
   fun `test ID range`() {
-    assertEquals(listOf(Id("99")), IdRange(95, 115).invalidIds1())
+    assertEquals(listOf(Id(99.asDigits())), IdRange(95, 115).invalidIds1())
   }
 
   @Test
   fun `test ID range of invalider Id`() {
-    assertEquals(listOf(Id("99"), Id("111")), IdRange(95, 115).invalidIds2())
+    assertEquals(listOf(Id(99.asDigits()), Id(111.asDigits())), IdRange(95, 115).invalidIds2())
   }
 }
