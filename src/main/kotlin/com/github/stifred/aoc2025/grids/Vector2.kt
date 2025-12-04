@@ -121,6 +121,7 @@ enum class Direction(val x: Int, val y: Int) {
   }
 
   companion object {
+    val all by lazy { entries }
     val horizontals by lazy { setOf(Left, Right) }
     val verticals by lazy { setOf(Up, Down) }
     val nonDiagonals by lazy { setOf(Left, Up, Right, Down) }

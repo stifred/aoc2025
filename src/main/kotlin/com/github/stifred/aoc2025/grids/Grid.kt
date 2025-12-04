@@ -37,6 +37,9 @@ class Grid2D<E : Any>(
   fun findAll(e: E): Set<Vector2> = findAll { it == e }
   fun findAll(predicate: (E) -> Boolean): Set<Vector2> = elements.filterValues(predicate).keys
 
+  fun removeAt(pos: Vector2) = elements.remove(pos)
+  fun removeAt(pos: Collection<Vector2>) = pos.forEach { removeAt(it) }
+
   fun freePositions() = sequence {
     for (x in topLeft.x..bottomRight.x) {
       for (y in topLeft.y..bottomRight.y) {
