@@ -12,28 +12,33 @@ fun main() {
   solve(part = 2) { db.totalFreshIdCount }
 }
 
-data class IngredientDatabase(val freshRanges: List<LongRange>, val allIds: Set<Long>) {
+data class IngredientDatabase(val freshRanges: List<FreshRange>, val allIds: Set<Long>) {
   val freshIdCount get() = allIds.count(::isFresh)
   val totalFreshIdCount: Long get() = freshRanges.asSequence()
-    .sortedWith(compareBy(LongRange::first, LongRange::last))
-    .fold(listOf()) { fixed: List<LongRange>, range: LongRange ->
+    .sortedWith(compareBy(FreshRange::min, FreshRange::max))
+    .fold(listOf()) { fixed: List<FreshRange>, range: FreshRange ->
       val last = fixed.lastOrNull()
 
-      if (last != null && last.last >= range.first) {
-        fixed - setOf(last) + setOf(minOf(range.first, last.first)..maxOf(range.last, last.last))
-      } else {
-        fixed + setOf(range)
-      }
-    }.sumOf { 1 + it.last - it.first  }
+      if (last != null && last touches range) fixed - last + (last combinedWith range) else fixed + range
+    }.sumOf { it.size }
 
   private fun isFresh(id: Long) = freshRanges.any { id in it }
+}
+
+data class FreshRange(val min: Long, val max: Long) {
+  val size get() = 1 + max - min
+
+  operator fun contains(id: Long) = id in min..max
+  infix fun touches(other: FreshRange) = max >= other.min
+
+  infix fun combinedWith(other: FreshRange) = copy(min = minOf(min, other.min), max = maxOf(max, other.max))
 }
 
 fun String.asIngredientDatabase(): IngredientDatabase {
   val (a, b) = split("\n\n")
 
   return IngredientDatabase(
-    freshRanges = a.nonEmptyLineSequence().map { it.asLongRange() }.toList(),
+    freshRanges = a.nonEmptyLineSequence().map { it.asLongRange() }.map { FreshRange(it.first, it.last) }.toList(),
     allIds = b.nonEmptyLineSequence().map { it.toLong() }.toSet(),
   )
 }
