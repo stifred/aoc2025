@@ -9,13 +9,33 @@ fun main() {
   val db = parseInput(day = 5) { it.asIngredientDatabase() }
 
   solve(part = 1) { db.freshIds.size }
+  solve(part = 2) { db.totalFreshIdCount }
 }
 
 data class IngredientDatabase(
   val freshRanges: List<LongRange>,
-  val allIds: List<Long>,
+  val allIds: Set<Long>,
 ) {
-  val freshIds get() = allIds.filter { id -> freshRanges.any { id in it } }
+  val totalFreshIdCount: Long get() {
+    val fixedRanges = mutableListOf<LongRange>()
+    for (range in freshRanges.sortedWith(compareBy(LongRange::first, LongRange::last))) {
+      if (fixedRanges.any { it.first <= range.first && it.last >= range.last }) continue
+
+      val last = fixedRanges.lastOrNull() ?: 0L..0L
+      if (last.last >= range.first) {
+        fixedRanges -= last
+        fixedRanges += minOf(range.first, last.first)..maxOf(range.last, last.last)
+      } else {
+        fixedRanges += range
+      }
+    }
+
+    return fixedRanges.sumOf { it.last - it.first + 1 }
+  }
+
+  val freshIds get() = allIds.filter { id ->
+    freshRanges.any { id in it }
+  }
 }
 
 fun String.asIngredientDatabase(): IngredientDatabase {
@@ -23,6 +43,6 @@ fun String.asIngredientDatabase(): IngredientDatabase {
 
   return IngredientDatabase(
     a.nonEmptyLineSequence().map { l -> l.split('-').map { it.toLong() }.let { (a, b) -> a..b } }.toList(),
-    b.nonEmptyLineSequence().map { it.toLong() }.toList(),
+    b.nonEmptyLineSequence().map { it.toLong() }.toSet(),
   )
 }
