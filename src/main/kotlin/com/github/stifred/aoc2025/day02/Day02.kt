@@ -2,6 +2,7 @@ package com.github.stifred.aoc2025.day02
 
 import com.github.stifred.aoc2025.numbers.asDigits
 import com.github.stifred.aoc2025.numbers.toLong
+import com.github.stifred.aoc2025.solutions.asLongRange
 import com.github.stifred.aoc2025.solutions.nonEmptyLineSequence
 import com.github.stifred.aoc2025.solutions.parseInput
 import com.github.stifred.aoc2025.solutions.solve
@@ -34,4 +35,4 @@ class IdRange(from: Long, to: Long) {
 }
 
 fun String.asIdRanges() = nonEmptyLineSequence().first().split(',').map { it.asIdRange() }
-private fun String.asIdRange() = split('-').map { it.toLong() }.let { (from, to) -> IdRange(from, to) }
+private fun String.asIdRange() = asLongRange().let { IdRange(it.first, it.last) }

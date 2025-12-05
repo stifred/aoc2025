@@ -20,7 +20,7 @@ class IngredientDatabaseTest {
       32
     """.trimIndent().asIngredientDatabase()
 
-    assertEquals(3, db.freshIds.size)
+    assertEquals(3, db.freshIdCount)
     assertEquals(14, db.totalFreshIdCount)
   }
 }
