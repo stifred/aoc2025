@@ -20,15 +20,13 @@ data class Operation(val kind: Kind, val operands: List<String>) {
   val kiddieResult: Long get() = operands.asSequence()
     .map { it.trim() }
     .map { it.toLong() }
-    .result()
+    .fold(kind.default, kind.apply)
   val grownupResult: Long get() = (0..<operands.maxOf { it.length }).asSequence()
     .map { i -> operands.map { o -> o[i] } }
     .map { it.joinToString(separator = "") }
     .map { it.trim() }
     .map { it.toLong() }
-    .result()
-
-  private fun Sequence<Long>.result(): Long = fold(kind.default, kind.apply)
+    .fold(kind.default, kind.apply)
 
   sealed class Kind(val default: Long, val apply: (Long, Long) -> Long) {
     object Plus : Kind(default = 0, apply = Long::plus)
