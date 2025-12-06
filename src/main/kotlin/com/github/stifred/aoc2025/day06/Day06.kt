@@ -7,8 +7,8 @@ import com.github.stifred.aoc2025.solutions.solve
 fun main() {
   val ws = parseInput(day = 6) { it.asWorksheet() }
 
-  solve(part = 1, benchmark = false) { ws.kiddieSum }
-  solve(part = 2, benchmark = false) { ws.grownupSum }
+  solve(part = 1, benchmark = true) { ws.kiddieSum }
+  solve(part = 2, benchmark = true) { ws.grownupSum }
 }
 
 data class Worksheet(val operations: List<Operation>) {
@@ -21,25 +21,18 @@ data class Operation(val kind: Kind, val operands: List<String>) {
     .map { it.trim() }
     .map { it.toLong() }
     .result()
-  val grownupResult: Long get() = (0..<operands.maxOf { it.length })
-    .asSequence()
+  val grownupResult: Long get() = (0..<operands.maxOf { it.length }).asSequence()
     .map { i -> operands.map { o -> o[i] } }
     .map { it.joinToString(separator = "") }
     .map { it.trim() }
     .map { it.toLong() }
     .result()
 
-  private fun Sequence<Long>.result(): Long = fold(kind.default, kind::apply)
+  private fun Sequence<Long>.result(): Long = fold(kind.default, kind.apply)
 
-  sealed class Kind(val default: Long) {
-    abstract fun apply(a: Long, b: Long): Long
-
-    object Plus : Kind(default = 0) {
-      override fun apply(a: Long, b: Long) = a + b
-    }
-    object Times : Kind(default = 1) {
-      override fun apply(a: Long, b: Long) = a * b
-    }
+  sealed class Kind(val default: Long, val apply: (Long, Long) -> Long) {
+    object Plus : Kind(default = 0, apply = Long::plus)
+    object Times : Kind(default = 1, apply = Long::times)
   }
 }
 

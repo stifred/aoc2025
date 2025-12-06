@@ -52,8 +52,8 @@ private fun benchCount(before: Long, after: Long): Int {
 
   return when {
     diff > 10_000_000_000 -> 1
-    diff > 100_000_000 -> 10
-    diff > 1_000_000 -> 100
+    diff > 1_000_000_000 -> 10
+    diff > 10_000_000 -> 100
     else -> 1_000
   }
 }
