@@ -1,48 +1,70 @@
 package com.github.stifred.aoc2025.day06
 
+import com.github.stifred.aoc2025.numbers.product
+import com.github.stifred.aoc2025.solutions.loadPuzzleInput
 import com.github.stifred.aoc2025.solutions.nonEmptyLineSequence
-import com.github.stifred.aoc2025.solutions.parseInput
 import com.github.stifred.aoc2025.solutions.solve
 
 fun main() {
-  val ws = parseInput(day = 6) { it.asWorksheet() }
+  val sheet = loadPuzzleInput(day = 6)
 
-  solve(part = 1, benchmark = true) { ws.kiddieSum }
-  solve(part = 2, benchmark = true) { ws.grownupSum }
+  solve(part = 1, benchmark = false) { sheet.asCephalopodProblems().sum }
+  solve(part = 2, benchmark = false) { sheet.asCephalopodProblemsWithGrownupsInTheRoom().sum }
 }
 
-data class Worksheet(val operations: List<Operation>) {
-  val kiddieSum get() = operations.sumOf { it.kiddieResult }
-  val grownupSum get() = operations.sumOf { it.grownupResult }
+fun String.asCephalopodProblems(): Sequence<Problem> {
+  val numbers = nonEmptyLineSequence()
+    .takeWhile { l -> l.any(Char::isDigit) }
+    .flatMap { it.split(' ') }
+    .filter { it.isNotBlank() }
+    .map { it.toLong() }
+    .toList()
+
+  return nonEmptyLineSequence().last()
+    .splitToSequence(' ')
+    .filter { it.isNotBlank() }
+    .mapIndexed { i, op ->
+      Problem(
+        operator = op[0].asOperator(),
+        operands = (i..numbers.size).step(1000).mapNotNull(numbers::getOrNull),
+      )
+    }
 }
 
-data class Operation(val kind: Kind, val operands: List<String>) {
-  val kiddieResult: Long get() = operands.asSequence()
-    .map { it.trim() }
-    .map { it.toLong() }
-    .fold(kind.default, kind.apply)
-  val grownupResult: Long get() = (0..<operands.maxOf { it.length }).asSequence()
-    .map { i -> operands.map { o -> o[i] } }
-    .map { it.joinToString(separator = "") }
-    .map { it.trim() }
-    .map { it.toLong() }
-    .fold(kind.default, kind.apply)
 
-  sealed class Kind(val default: Long, val apply: (Long, Long) -> Long) {
-    object Plus : Kind(default = 0, apply = Long::plus)
-    object Times : Kind(default = 1, apply = Long::times)
+fun String.asCephalopodProblemsWithGrownupsInTheRoom() = sequence {
+  val lines = nonEmptyLineSequence().toList()
+  val operands = mutableListOf<Long>()
+  for (x in (0..<lines[0].length).reversed()) {
+    var number = 0L
+    var operator: Problem.Operator? = null
+    for (y in lines.indices) {
+      when (val char = lines[y][x]) {
+        in '0'..'9' -> { number = (number * 10L) + (char.code - '0'.code) }
+        '*', '+' -> {
+          operator = char.asOperator()
+          break
+        }
+      }
+    }
+
+    if (number > 0) operands += number
+
+    if (operator != null) {
+      yield(Problem(operator, operands.toList()))
+      operands.clear()
+    }
   }
 }
 
-fun String.asWorksheet() = buildList {
-  val kindMap = mapOf('+' to Operation.Kind.Plus, '*' to Operation.Kind.Times)
+val Sequence<Problem>.sum get() = sumOf(Problem::result)
+private fun Char.asOperator() = Problem.Operator.entries.first { it.char == this }
 
-  val numberLineCount = nonEmptyLineSequence().count() - 1
-  val operators = nonEmptyLineSequence().last().mapIndexedNotNull { i, ch -> if (ch == ' ') null else i to ch }.toMap()
-  val boundaries = operators.keys.asSequence().map { it - 2 } + lineSequence().maxOf { it.length - 1 }
-  for ((start, operator) in operators) {
-    val end = boundaries.first { it > start }
-    val operands = nonEmptyLineSequence().take(numberLineCount).map { it.substring(start..end) }.toList()
-    add(Operation(kindMap.getValue(operator), operands))
+data class Problem(val operator: Operator, val operands: List<Long>) {
+  val result get() = when (operator) {
+    Operator.Addition -> operands.sum()
+    Operator.Multiplication -> operands.product()
   }
-}.let { Worksheet(it) }
+
+  enum class Operator(val char: Char) { Addition('+'), Multiplication('*') }
+}

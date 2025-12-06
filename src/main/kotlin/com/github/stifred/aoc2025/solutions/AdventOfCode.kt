@@ -8,7 +8,7 @@ import java.net.http.HttpResponse
 
 private val sessionId by lazy { loadSessionId() }
 
-fun loadPuzzleInput(year: Int, day: Int): String {
+fun loadPuzzleInput(year: Int = 2025, day: Int): String {
   val fileName = "/tmp/aoc-$year-$day-v1.txt"
   val file = File(fileName);
   if (!file.exists()) {
