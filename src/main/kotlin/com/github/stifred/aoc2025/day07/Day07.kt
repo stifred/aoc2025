@@ -12,31 +12,35 @@ import com.github.stifred.aoc2025.solutions.solve
 fun main() {
   val manifold = parseInput(day = 7) { it.asTachyonManifold() }
 
-  solve(part = 1) { manifold.sendBeamAndCountSplits() }
+  solve(part = 1) { manifold.sendBeamAndFindSplits().size }
   solve(part = 2) { manifold.sendQuantumBeamAndCountTimelines() }
 }
 
-data class TachyonManifold(val startGrid: Grid2D<Entity>) {
+class TachyonManifold(startGrid: Grid2D<Entity>) {
   val start = startGrid.find(Start)!!
   val splitters = startGrid.findAll(Splitter)
 }
 
-fun TachyonManifold.sendBeamAndCountSplits(): Int {
-  val grid = startGrid.copy()
-  var splits = 0
-  for (y in start.y..<grid.bottomRight.y) {
-    val toConsider = grid.findAll { it is Start || it is Beam }.filter { it.y == y }
-    for (pos in toConsider) {
-      val next = pos.move(Direction.Down)
-      if (!grid.put(next, Beam) && grid.elementAt(next) is Splitter) {
-        val left = grid.put(next.move(Direction.Left), Beam)
-        val right = grid.put(next.move(Direction.Right), Beam)
-        if (left || right) splits++
-      }
+fun TachyonManifold.sendBeamAndFindSplits(
+  position: Vector2 = start,
+  taken: MutableSet<Vector2> = mutableSetOf(),
+): Set<Vector2> {
+  val next = splitters.asSequence()
+    .filter { it.x == position.x }
+    .filter { it.y > position.y }
+    .minByOrNull { it.y }
+
+  return when (next) {
+    in taken -> setOf()
+    null -> setOf()
+    else -> {
+      Direction.horizontals
+        .map { next.move(it) }
+        .flatMap { sendBeamAndFindSplits(it, taken) }
+        .fold(setOf(next)) { set, res -> set + res }
+        .also { taken += next }
     }
   }
-
-  return splits
 }
 
 fun TachyonManifold.sendQuantumBeamAndCountTimelines(
@@ -65,4 +69,3 @@ fun String.asTachyonManifold() = TachyonManifold(startGrid = asGrid(mapOf('S' to
 sealed class Entity
 data object Start : Entity()
 data object Splitter : Entity()
-data object Beam : Entity()
