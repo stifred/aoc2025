@@ -12,6 +12,7 @@ class Grid2D<E : Any>(
   val height = 1 + bottomRight.y - topLeft.y
 
   fun put(pos: Vector2, element: E, force: Boolean = false): Boolean {
+    if (!(pos isWithin this)) return false
     if (!force && elements[pos] != null) return false
 
     elements[pos] = element
@@ -52,6 +53,15 @@ class Grid2D<E : Any>(
   }
 
   fun copy() = Grid2D(topLeft = topLeft, bottomRight = bottomRight, elements.toMutableMap())
+
+  fun visualize(map: Map<E, Char>) = buildString {
+    for (y in (topLeft.y)..(bottomRight.y)) {
+      for (x in (topLeft.x)..(bottomRight.x)) {
+        append(elementAt(x xy y)?.let { map[it] } ?: '.')
+      }
+      append('\n')
+    }
+  }
 
   companion object {
     fun <E : Any> String.asGrid(map: Map<Char, E>) = asGrid { map[it] }

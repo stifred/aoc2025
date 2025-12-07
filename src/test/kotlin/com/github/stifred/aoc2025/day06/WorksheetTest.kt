@@ -12,9 +12,8 @@ class WorksheetTest {
         6 98  215 314
       *   +   *   +
     """.trimIndent()
-    val worksheet = input.asWorksheet()
 
-    assertEquals(4277556L, worksheet.kiddieSum)
-    assertEquals(3263827L, worksheet.grownupSum)
+    assertEquals(4277556L, input.asCephalopodProblems().sum)
+    assertEquals(3263827L, input.asCephalopodProblemsWithGrownupsInTheRoom().sum)
   }
 }

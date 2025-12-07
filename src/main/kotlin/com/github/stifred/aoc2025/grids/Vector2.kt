@@ -15,6 +15,7 @@ data class Vector2(val x: Int, val y: Int) {
   }
 
   infix fun isWithin(grid: Grid2D<*>) = isWithin(topLeft = grid.topLeft, bottomRight = grid.bottomRight)
+  infix fun isOutside(grid: Grid2D<*>) = !isWithin(grid)
 
   infix fun manhattanTo(other: Vector2) = abs(x - other.x) + abs(y - other.y)
 
@@ -55,6 +56,8 @@ data class Vector2(val x: Int, val y: Int) {
 }
 
 data class Vector2WithDirection(val pos: Vector2, val dir: Direction) : SearchState {
+  val nextPosition get() = pos.move(dir)
+
   companion object {
     infix fun Vector2.towards(dir: Direction) = Vector2WithDirection(this, dir)
     infix fun Direction.at(pos: Vector2) = Vector2WithDirection(pos, this)
