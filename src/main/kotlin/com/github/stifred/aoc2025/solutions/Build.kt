@@ -21,7 +21,7 @@ fun <T : Any> parseInput(day: Int, year: Int = 2025, benchmark: Boolean = false,
   return first
 }
 
-fun <T : Any> solve(part: Int, benchmark: Boolean = false, action: () -> T): T {
+fun <T : Any> solve(part: Int = -1, benchmark: Boolean = false, action: () -> T): T {
   val elements = mutableSetOf<T>()
 
   val before = System.nanoTime()
@@ -40,7 +40,7 @@ fun <T : Any> solve(part: Int, benchmark: Boolean = false, action: () -> T): T {
     error("Results are different: ${elements.first()}, ${elements.last()}, etc.")
   }
 
-  println("\nPART $part (benchmark=$benchmark, runs=$count)")
+  println("\n${if (part != -1) "PART $part" else "SOLUTION"} (benchmark=$benchmark, runs=$count)")
   println("Output: ${elements.first()}")
   println("Time:   ${formatNanos(each)}")
 

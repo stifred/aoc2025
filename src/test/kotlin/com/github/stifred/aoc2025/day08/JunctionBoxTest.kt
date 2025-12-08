@@ -1,7 +1,7 @@
 package com.github.stifred.aoc2025.day08
 
+import com.github.stifred.aoc2025.searching.firstOf
 import org.junit.jupiter.api.Assertions.*
-import org.junit.jupiter.api.assertThrows
 import kotlin.test.Test
 
 class JunctionBoxTest {
@@ -31,10 +31,8 @@ class JunctionBoxTest {
     """.trimIndent()
     val list = input.asJunctionBoxes()
 
-    assertEquals(JunctionBox(425, 690, 689), list.first().closestIn(list))
-    assertEquals(40, list.buildCircuits(limit = 10).value())
-
-    val e = assertThrows<SecondAnswer> { list.buildCircuits() }
-    assertEquals(25272, e.value)
+    val results = list.buildCircuits(originalLimit = 10).toList()
+    assertEquals(SizeProduct(40), results.firstOf<SizeProduct>())
+    assertEquals(XProduct(25272), results.firstOf<XProduct>())
   }
 }
