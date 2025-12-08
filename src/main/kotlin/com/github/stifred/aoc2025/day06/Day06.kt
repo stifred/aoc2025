@@ -20,15 +20,17 @@ fun String.asCephalopodProblems(): Sequence<Problem> {
     .map { it.toLong() }
     .toList()
 
-  return nonEmptyLineSequence().last()
+  val operators = nonEmptyLineSequence().last()
     .splitToSequence(' ')
     .filter { it.isNotBlank() }
-    .mapIndexed { i, op ->
-      Problem(
-        operator = op[0].asOperator(),
-        operands = (i..numbers.size).step(1000).mapNotNull(numbers::getOrNull),
-      )
-    }
+    .toList()
+
+  return operators.asSequence().mapIndexed { i, op ->
+    Problem(
+      operator = op[0].asOperator(),
+      operands = (i..numbers.size).step(operators.size).mapNotNull(numbers::getOrNull),
+    )
+  }
 }
 
 

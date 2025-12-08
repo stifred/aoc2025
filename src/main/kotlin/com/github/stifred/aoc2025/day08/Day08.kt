@@ -9,7 +9,7 @@ import com.github.stifred.aoc2025.solutions.solve
 fun main() {
   val boxList = parseInput(day = 8) { it.asJunctionBoxes() }
 
-  solve {
+  solve(benchmark = false) {
     val results = boxList.buildCircuits(originalLimit = 1000).toList()
     "A=${results.firstOf<SizeProduct>().product}; B=${results.firstOf<XProduct>().product}"
   }
@@ -19,42 +19,44 @@ fun List<JunctionBox>.buildCircuits(originalLimit: Int) = sequence {
   val circuits = mutableListOf<Set<JunctionBox>>()
   var countDown = originalLimit
 
-  val pairs = asSequence()
-    .flatMap { l -> map { setOf(l, it) } }
-    .filter { it.size == 2 }
-    .distinct()
-    .map { it.first() to it.last() }
+  asSequence()
+    .flatMapIndexed { i, l -> drop(i + 1).map { l to it } }
     .sortedBy { (a, b) -> a.squaredDistanceTo(b) }
+    .forEach { (a, b) ->
+      val aIndex = circuits.indexOfFirst { a in it }
+      val bIndex = circuits.indexOfFirst { b in it }
+      if (aIndex >= 0) {
+        if (bIndex >= 0 && bIndex != aIndex) {
+          val from = maxOf(aIndex, bIndex)
+          val to = minOf(aIndex, bIndex)
 
-  for ((a, b) in pairs) {
-    val circuitA = circuits.firstOrNull { a in it }?.also { circuits -= it }
-    val circuitB = circuits.firstOrNull { b in it }?.also { circuits -= it }
-
-    circuits += when {
-      circuitA != null -> when {
-        circuitB != null -> circuitA + circuitB + a + b
-        else -> circuitA + b
+          circuits[to] += circuits[from] + setOf(a, b)
+          circuits.removeAt(from)
+        } else {
+          circuits[aIndex] += b
+        }
+      } else if (bIndex >= 0) {
+        circuits[bIndex] += a
+      } else {
+        circuits += mutableSetOf(a, b)
       }
-      circuitB != null -> circuitB + a
-      else -> setOf(a, b)
-    }
 
-    countDown--
-    if (countDown == 0) {
-      yield(
-        circuits.asSequence()
-          .map { it.size }
-          .sortedDescending()
-          .take(3)
-          .product()
-          .let { SizeProduct(it) },
-      )
-    }
+      countDown--
+      if (countDown == 0) {
+        yield(
+          circuits.asSequence()
+            .map { it.size }
+            .sortedDescending()
+            .take(3)
+            .product()
+            .let { SizeProduct(it) },
+        )
+      }
 
-    if (circuits.size == 1 && circuits.first().size == size) {
-      yield(XProduct(a.x * b.x))
+      if (circuits.size == 1 && circuits.first().size == size) {
+        yield(XProduct(a.x * b.x))
+      }
     }
-  }
 }.take(2)
 
 data class JunctionBox(val x: Long, val y: Long, val z: Long) {
