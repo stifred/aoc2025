@@ -26,7 +26,6 @@ class TachyonManifoldTest {
     """.trimIndent()
     val manifold = input.asTachyonManifold()
 
-    assertEquals(21, manifold.sendBeamAndCountSplits())
-    assertEquals(40, manifold.sendQuantumBeamAndCountTimelines())
+    assertEquals(21 to 40L, manifold.sendQuantumBeamAndCountTimelines())
   }
 }
