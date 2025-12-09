@@ -35,8 +35,8 @@ data class Vector2(val x: Int, val y: Int) {
       x < other.x -> towards(Direction.Right)
       else -> towards(Direction.Left)
     }
-    else -> null
-  } ?: error("Not in a straight line")
+    else -> error("Not in a straight line")
+  }
 
   companion object {
     fun between(a: Vector2, b: Vector2, alt: Boolean = false) = buildSet {
