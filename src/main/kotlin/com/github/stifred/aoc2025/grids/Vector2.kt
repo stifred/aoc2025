@@ -1,5 +1,6 @@
 package com.github.stifred.aoc2025.grids
 
+import com.github.stifred.aoc2025.grids.Vector2WithDirection.Companion.towards
 import com.github.stifred.aoc2025.searching.SearchState
 import kotlin.math.abs
 
@@ -24,6 +25,18 @@ data class Vector2(val x: Int, val y: Int) {
     y == other.y -> x in (other.x - 1)..(other.x + 1)
     else -> false
   }
+
+  fun facing(other: Vector2): Vector2WithDirection = when {
+    x == other.x -> when {
+      y < other.y -> towards(Direction.Down)
+      else -> towards(Direction.Up)
+    }
+    y == other.y -> when {
+      x < other.x -> towards(Direction.Right)
+      else -> towards(Direction.Left)
+    }
+    else -> null
+  } ?: error("Not in a straight line")
 
   companion object {
     fun between(a: Vector2, b: Vector2, alt: Boolean = false) = buildSet {
@@ -50,6 +63,11 @@ data class Vector2(val x: Int, val y: Int) {
     fun Pair<Int, Int>.asVector2() = Vector2(x = first, y = second)
 
     infix fun Int.xy(other: Int) = (this to other).asVector2()
+
+    fun String.asVector2() = split(',').map { it.toInt() }.let { (x, y) -> Vector2(x, y) }
+
+    val Collection<Vector2>.xPositions get() = asSequence().map { it.x }.toSet()
+    val Collection<Vector2>.yPositions get() = asSequence().map { it.y }.toSet()
   }
 
   override fun toString(): String = "$x,$y"
@@ -138,5 +156,3 @@ enum class Direction(val x: Int, val y: Int) {
     }
   }
 }
-
-fun String.asVector2() = split(',').let { (x, y) -> Vector2(x.toInt(), y.toInt()) }

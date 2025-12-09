@@ -19,6 +19,10 @@ class Grid2D<E : Any>(
     return true
   }
 
+  fun put(pos: Collection<Vector2>, element: E, force: Boolean = false): Boolean {
+    return pos.count { put(it, element, force) } == pos.size
+  }
+
   fun move(from: Vector2, to: Vector2, force: Boolean = false): Boolean {
     if (!(to isWithin this)) return false
     val source = elementAt(from) ?: return false
@@ -54,12 +58,12 @@ class Grid2D<E : Any>(
 
   fun copy() = Grid2D(topLeft = topLeft, bottomRight = bottomRight, elements.toMutableMap())
 
-  fun visualize(map: Map<E, Char>) = buildString {
+  fun print(map: Map<E, Char>) {
     for (y in (topLeft.y)..(bottomRight.y)) {
       for (x in (topLeft.x)..(bottomRight.x)) {
-        append(elementAt(x xy y)?.let { map[it] } ?: '.')
+        print(elementAt(x xy y)?.let { map[it] } ?: '.')
       }
-      append('\n')
+      print('\n')
     }
   }
 

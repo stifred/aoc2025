@@ -9,18 +9,18 @@ import com.github.stifred.aoc2025.solutions.solve
 fun main() {
   val boxList = parseInput(day = 8) { it.asJunctionBoxes() }
 
-  solve(benchmark = false) {
+  solve(benchmark = true) {
     val results = boxList.buildCircuits(originalLimit = 1000).toList()
     "A=${results.firstOf<SizeProduct>().product}; B=${results.firstOf<XProduct>().product}"
   }
 }
 
 fun List<JunctionBox>.buildCircuits(originalLimit: Int) = sequence {
-  val circuits = mutableListOf<Set<JunctionBox>>()
+  val circuits = mutableListOf<MutableSet<JunctionBox>>()
   var countDown = originalLimit
 
   asSequence()
-    .flatMapIndexed { i, l -> drop(i + 1).map { l to it } }
+    .flatMapIndexed { i, l -> asSequence().drop(i + 1).map { l to it } }
     .sortedBy { (a, b) -> a.squaredDistanceTo(b) }
     .forEach { (a, b) ->
       val aIndex = circuits.indexOfFirst { a in it }
