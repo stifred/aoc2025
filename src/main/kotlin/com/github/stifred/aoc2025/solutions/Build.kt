@@ -16,9 +16,13 @@ fun <T : Any> parseInput(day: Int, year: Int = 2025, benchmark: Boolean = false,
   val each = (finalAfter - before) / count
 
   println("\nPARSER (year=$year, day=$day, benchmark=$benchmark, runs=$count)")
-  println("Time: ${formatNanos(each)}")
+  println("Time:            ${formatNanos(each)}")
 
   return first
+}
+
+fun <T : Any> info(key: String, func: () -> T) {
+  println("${("$key:").padEnd(16, ' ').substring(0..<16)} ${func()}")
 }
 
 fun <T : Any> solve(part: Int = -1, benchmark: Boolean = false, action: () -> T): T {
@@ -41,8 +45,8 @@ fun <T : Any> solve(part: Int = -1, benchmark: Boolean = false, action: () -> T)
   }
 
   println("\n${if (part != -1) "PART $part" else "SOLUTION"} (benchmark=$benchmark, runs=$count)")
-  println("Output: ${elements.first()}")
-  println("Time:   ${formatNanos(each)}")
+  println("Output:          ${elements.first()}")
+  println("Time:            ${formatNanos(each)}")
 
   return elements.first()
 }

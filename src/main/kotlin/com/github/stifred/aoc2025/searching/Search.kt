@@ -9,11 +9,14 @@ class Search<S : SearchState>(
   private data object Skipped : RuntimeException("Skipped")
 
   private val findlings = ArrayDeque<S>()
+  val found: Boolean get() = foundCost < Int.MAX_VALUE
+  var foundCost: Int = Int.MAX_VALUE
 
   fun reset() {
     order.reset()
     seenSpace.reset()
     findlings.clear()
+    foundCost = Int.MAX_VALUE
   }
 
   fun skip(): Nothing {
@@ -21,6 +24,7 @@ class Search<S : SearchState>(
   }
 
   fun found(state: S): Nothing {
+    foundCost = state.cost
     findlings.addLast(state)
     throw Skipped
   }
@@ -57,6 +61,12 @@ class Search<S : SearchState>(
     while (true) {
       val nextFind = find(func) ?: break
       add(nextFind)
+    }
+  }
+
+  fun findSequence(func: Search<S>.(S) -> Unit) = sequence {
+    while (true) {
+      yield(find(func) ?: break)
     }
   }
 }
