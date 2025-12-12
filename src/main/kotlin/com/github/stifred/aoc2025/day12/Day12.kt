@@ -13,12 +13,10 @@ import com.github.stifred.aoc2025.solutions.solve
 import java.util.Collections.nCopies
 
 fun main() {
-  val (_, regions) = parseInput(day = 12) { it.asShapesAndRegions() }
+  val (shapes, regions) = parseInput(day = 12) { it.asShapesAndRegions() }
 
-  solve(part = 1) {
-    // This is some bullshit…
-    regions.count(Region::canLikelyBeFilled)
-  }
+  solve(part = 1) { regions.count(Region::canLikelyBeFilled) /* This is some bullshit */ }
+  solve(part = 2) { regions.countFillableBy(shapes) }
 }
 
 fun List<Region>.countFillableBy(shapes: List<Shape>) = count { it.canBeFilledBy(shapes) }
