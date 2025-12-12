@@ -8,29 +8,25 @@ import kotlin.math.round
 import kotlin.math.roundToInt
 import kotlin.math.roundToLong
 
-fun List<Equation>.runGaussianElimination(): Long {
+fun List<Equation>.solveWithGaussianElimination(): Long {
   // Make matrix and transform it
   val maximums = maximums()
   val buttons = (0..maxOf { it.parts.max() })
-  val width = 2 + buttons.last
-  val height = size
-  val matrix = Matrix(width, height)
+  val matrix = Matrix(width = 2 + buttons.last, height = size)
   for ((r, equation) in withIndex()) {
-    for (c in equation.parts) {
-      matrix.putValue(r, c, 1)
-    }
-    matrix.putValue(r, width - 1, equation.sum)
+    for (c in equation.parts) matrix.putValue(r, c, 1)
+    matrix.putValue(r, matrix.width - 1, equation.sum)
   }
   matrix.runGaussJordanElimination()
 
   // Build equations from matrix
-  val equationsFromMatrix = (0..<height).map { r ->
+  val equationsFromMatrix = (0..<matrix.height).map { r ->
     buildList {
-      for (c in 0..<(width - 1)) {
+      for (c in 0..<(matrix.width - 1)) {
         val multiplier = matrix.valueAt(r, c)
         if (multiplier != 0.0) add(FixedEquationPart(btn = c, multiplier = multiplier))
       }
-      add(FixedEquationPart(multiplier = -matrix.valueAt(r, width - 1)))
+      add(FixedEquationPart(multiplier = -matrix.valueAt(r, matrix.width - 1)))
     }.let { FixedEquation(it) }
   }
 

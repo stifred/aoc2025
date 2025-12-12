@@ -64,7 +64,9 @@ data class Vector2(val x: Int, val y: Int) {
 
     infix fun Int.xy(other: Int) = (this to other).asVector2()
 
-    fun String.asVector2() = split(',').map { it.toInt() }.let { (x, y) -> Vector2(x, y) }
+    fun String.asVector2() = sequenceOf(',', 'x')
+      .first { contains(it) }
+      .let { sep -> split(sep).map { it.toInt() }.let { (x, y) -> Vector2(x, y) } }
 
     val Collection<Vector2>.xPositions get() = asSequence().map { it.x }.toSet()
     val Collection<Vector2>.yPositions get() = asSequence().map { it.y }.toSet()

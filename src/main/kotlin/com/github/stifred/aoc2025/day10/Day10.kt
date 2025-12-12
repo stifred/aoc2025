@@ -37,7 +37,7 @@ data class LightDiagram(val targetLights: List<Boolean>, val targetJoltages: Lis
       .mapIndexed { i, j -> Equation(j, buttons.indices.filter { i in buttons[it] }.toSet()) }
       .sortedBy { it.parts.size }
 
-    return equations.runGaussianElimination()
+    return equations.solveWithGaussianElimination()
   }
 
   fun fetchLights(): Sequence<Indicator> {
@@ -46,7 +46,6 @@ data class LightDiagram(val targetLights: List<Boolean>, val targetJoltages: Lis
 
     return search.findSequence { machine ->
       if (machine.cost > foundCost) skip()
-      if (!found && machine.lights == targetLights) found(machine)
       if (machine.lights == targetLights) found(machine)
 
       val index = maxOf(0, buttons.indexOf(machine.lastButton))
@@ -64,11 +63,7 @@ data class Indicator(
     val newLights = lights.toMutableList()
     for (i in button) newLights[i] = !lights[i]
 
-    return copy(
-      lights = newLights,
-      lastButton = button,
-      cost = cost + 1,
-    )
+    return copy(lights = newLights, lastButton = button, cost = cost + 1)
   }
 }
 

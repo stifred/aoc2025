@@ -25,13 +25,15 @@ fun Map<String, Set<String>>.countPaths(
 }
 
 fun Map<String, Set<String>>.countPathsToOutViaDacAndFft(from: String): Long {
-  val fromDac = countPaths(from, "dac", setOf("fft", "out"))
+  // First path: requires dac->fft to be possible
   val dacFft = countPaths("dac", "fft", setOf(from, "out"))
-  val fftOut = countPaths("fft", "out", setOf(from, "dac"))
+  val fromDac = if (dacFft > 0L) countPaths(from, "dac", setOf("fft", "out")) else 0L
+  val fftOut = if (fromDac > 0L) countPaths("fft", "out", setOf(from, "dac")) else 0L
 
-  val fromFft = countPaths(from, "fft", setOf("dac", "out"))
-  val fftDac = countPaths("fft", "dac", setOf(from, "out"))
-  val dacOut = countPaths("dac", "out", setOf(from, "fft"))
+  // Second path: requires fft->dac to be possible; ergo only if dac->fft doesn't exist
+  val fftDac = if (dacFft == 0L) countPaths("fft", "dac", setOf(from, "out")) else 0L
+  val fromFft = if (fftDac > 0L) countPaths(from, "fft", setOf("dac", "out")) else 0L
+  val dacOut = if (fromFft > 0L) countPaths("dac", "out", setOf(from, "fft")) else 0L
 
   return (fromDac * dacFft * fftOut) + (fromFft * fftDac * dacOut)
 }
